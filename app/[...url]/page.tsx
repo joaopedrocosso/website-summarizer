@@ -1,3 +1,4 @@
+import Chat from '@/components/Chat'
 import { ragChat } from '@/lib/rag-chat'
 import { redis } from '@/lib/redis'
 import React from 'react'
@@ -14,7 +15,7 @@ function fixUrl({ url }: { url: string[] }){
 }
 
 const Page = async ({ params }: PageProps) => {
-  
+
     const fixedUrl = fixUrl({
         url: params.url as string[]
     })
@@ -31,10 +32,10 @@ const Page = async ({ params }: PageProps) => {
         await redis.sadd("indexed-urls", fixedUrl)
     }
 
+    const sessionId = "mock-session"
+
     return (
-        <div>
-            
-        </div>
+        <Chat sessionId={sessionId} />
   )
 }
 
