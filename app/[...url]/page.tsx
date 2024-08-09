@@ -1,3 +1,4 @@
+import { ragChat } from '@/lib/rag-chat'
 import React from 'react'
 
 interface PageProps{
@@ -15,6 +16,12 @@ const Page = async ({ params }: PageProps) => {
   
     const fixedUrl = fixUrl({
         url: params.url as string[]
+    })
+
+    await ragChat.context.add({
+        type: 'html',
+        source: fixedUrl,
+        config: {chunkOverlap: 50, chunkSize: 200}
     })
 
     return (
