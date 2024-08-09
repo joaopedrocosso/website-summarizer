@@ -1,4 +1,5 @@
 import { ragChat } from '@/lib/rag-chat'
+import { redis } from '@/lib/redis'
 import React from 'react'
 
 interface PageProps{
@@ -18,11 +19,17 @@ const Page = async ({ params }: PageProps) => {
         url: params.url as string[]
     })
 
-    await ragChat.context.add({
-        type: 'html',
-        source: fixedUrl,
-        config: {chunkOverlap: 50, chunkSize: 200}
-    })
+    const alreadyIndexed = await redis.sismember("indexed-urls", fixedUrl)
+
+    if(!alreadyIndexed){
+        await ragChat.context.add({
+            type: 'html',
+            source: fixedUrl,
+            config: {chunkOverlap: 50, chunkSize: 200}
+        })
+
+        await redis.sadd("indexed-urls", fixedUrl)
+    }
 
     return (
         <div>
